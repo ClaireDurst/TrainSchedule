@@ -25,43 +25,49 @@ function appendToTable(Train, Destination, Frequency, Next, Away){
   $tableRow.append("<td>" + Away + "</td>");
   $table.append($tableRow);
 }
-
-var databaseref = firebase.database();
+// now = moment().format('HH:mm')
+// time= "16:15"
+// next = moment(time,"HH:mm").format("HH:mm")
+// var converted_next = moment(next, "HH:mm").diff(moment(now, "HH:mm"))
+// console.log(moment(converted_next).format("m"))
+var database = firebase.database();
 $(document).ready(function(){
   $("#submit").on("click", function(){
+    event.preventDefault();
+
     Train = $("#Trainname").val().trim();
     Destination = $("#Destination").val().trim();
     firstTrain = $("#FirstTime").val().trim();
-    Frequency = $("#Frequency").val().trim();
+    frequency = parseInt($("#Frequency").val().trim());
 
-var first1 = moment(firstTrain, 'HH:mm')
-var add = first1.add(Frequency, 'm')
+    var converted = moment(firstTrain, "HH:mm").subtract(1, "years");
 
+    var diffTime = moment().diff(moment(converted), "minutes");
 
-    var next = moment().add(away, "m").format("hh:mm A");
-    var converted_next = moment().diff(moment.unix(next), "minutes");
-    var tRemainder = moment().diff(moment.unix(next), "minutes") % Frequency ;
-    var away = Frequency + tRemainder;
-    var now = moment([]).valueOf()
-    var arrival= now + Frequency
+    var howLong = diffTime % frequency;
 
+    minsAway = frequency - howLong;
 
-    databaseref.ref().push({
-      Train:Train,
-      Destination:Destination,
-      Frequency:Frequency,
-      Next:Next,
-      Away:Away
+    nextArrival = moment().add(minsAway, "minutes").format("HH:mm");
+
+    // push information to Firebase
+    database.ref().push({
+        Train: Train,
+        Destination: Destination,
+        Frequency: frequency,
+        Next: nextArrival,
+        Away: minsAway
+
     });
   });
 
-  databaseref.ref().on("child_added", function(childSnapshot){
+  database.ref().on("child_added", function(childSnapshot){
       // Log everything that's coming out of snapshot
-      console.log(childSnapshot.val().Train);
-      console.log(childSnapshot.val().Destination);
-      console.log(childSnapshot.val().Frequency);
-      console.log(childSnapshot.val().Next);
-      console.log(childSnapshot.val().Away);
+      // console.log(childSnapshot.val().Train);
+      // console.log(childSnapshot.val().Destination);
+      // console.log(childSnapshot.val().Frequency);
+      // console.log(childSnapshot.val().Next);
+      // console.log(childSnapshot.val().Away);
       appendToTable( childSnapshot.val().Train, childSnapshot.val().Destination, childSnapshot.val().Frequency, childSnapshot.val().Next, childSnapshot.val().Away);
 
   });
