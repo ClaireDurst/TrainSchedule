@@ -29,20 +29,12 @@ function appendToTable(Train, Destination, Frequency, Next, Away){
 var databaseref = firebase.database();
 $(document).ready(function(){
   $("#submit").on("click", function(){
-    var Train = $("#Trainname").val().trim();
-    var Destination = $("#Destination").val().trim();
-    var firstTrain = $("#FirstTime").val().trim();
-    var Frequency = $("#Frequency").val().trim();
+    Train = $("#Trainname").val().trim();
+    Destination = $("#Destination").val().trim();
+    firstTrain = $("#FirstTime").val().trim();
+    Frequency = $("#Frequency").val().trim();
 
-
-  
-  $("#Trainname").val("");
-  $("#Destination").val("");
-  $("#firstTrain").val("");
-  $("#Frequency").val("");
-
-
-var first1 = moment(first, 'HH:mm')
+var first1 = moment(firstTrain, 'HH:mm')
 var add = first1.add(Frequency, 'm')
 
 
@@ -52,7 +44,7 @@ var add = first1.add(Frequency, 'm')
     var away = Frequency + tRemainder;
     var now = moment([]).valueOf()
     var arrival= now + Frequency
-    
+
 
     databaseref.ref().push({
       Train:Train,
@@ -70,11 +62,8 @@ var add = first1.add(Frequency, 'm')
       console.log(childSnapshot.val().Frequency);
       console.log(childSnapshot.val().Next);
       console.log(childSnapshot.val().Away);
-      appendToTable( childSnapshot.val().Trainname, childSnapshot.val().Destination, childSnapshot.val().Frequency, childSnapshot.val().Next, childSnapshot.val().Away);
+      appendToTable( childSnapshot.val().Train, childSnapshot.val().Destination, childSnapshot.val().Frequency, childSnapshot.val().Next, childSnapshot.val().Away);
 
   });
 
 });
-  
-
-
