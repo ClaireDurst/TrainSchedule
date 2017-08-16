@@ -9,6 +9,11 @@
   };
   firebase.initializeApp(config);
 
+  var Train;
+  var Destination;
+  var Frequency;
+  var Next = " ";
+  var Away = " ";
 
 function appendToTable(Train, Destination, Frequency, Next, Away){
   var $table = $("#trainTable");
@@ -23,50 +28,53 @@ function appendToTable(Train, Destination, Frequency, Next, Away){
 
 var databaseref = firebase.database();
 $(document).ready(function(){
-  $("#submitbtn").on("click", function(){
-    var Train = $("#Train").val().trim();
+  $("#submit").on("click", function(){
+    var Train = $("#Trainname").val().trim();
     var Destination = $("#Destination").val().trim();
     var firstTrain = $("#FirstTime").val().trim();
-    var frequency = $("#Frequency").val().trim();
+    var Frequency = $("#Frequency").val().trim();
+
+
   
-  
+  $("#Trainname").val("");
+  $("#Destination").val("");
+  $("#firstTrain").val("");
+  $("#Frequency").val("");
 
 
 var first1 = moment(first, 'HH:mm')
-var add = first1.add(frequency, 'm')
+var add = first1.add(Frequency, 'm')
 
 
     var next = moment().add(away, "m").format("hh:mm A");
     var converted_next = moment().diff(moment.unix(next), "minutes");
-    var tRemainder = moment().diff(moment.unix(next), "minutes") % frequency ;
-    var away = frequency + tRemainder;
+    var tRemainder = moment().diff(moment.unix(next), "minutes") % Frequency ;
+    var away = Frequency + tRemainder;
     var now = moment([]).valueOf()
-    var arrival= now + frequency
+    var arrival= now + Frequency
     
 
     databaseref.ref().push({
       Train:Train,
-      Location:Location,
-      frequency:frequency,
-      dateAdded:dateAdded,
-      next:away,
-      away:away
+      Destination:Destination,
+      Frequency:Frequency,
+      Next:Next,
+      Away:Away
     });
   });
 
   databaseref.ref().on("child_added", function(childSnapshot){
       // Log everything that's coming out of snapshot
       console.log(childSnapshot.val().Train);
-      console.log(childSnapshot.val().Location);
-      console.log(childSnapshot.val().frequency);
-      console.log(childSnapshot.val().next);
-      console.log(childSnapshot.val().away);
-      appendToTable( childSnapshot.val().Train, childSnapshot.val().role, childSnapshot.val().startDate, childSnapshot.val().monthlyRate, childSnapshot.val().months, childSnapshot.val().billed)
+      console.log(childSnapshot.val().Destination);
+      console.log(childSnapshot.val().Frequency);
+      console.log(childSnapshot.val().Next);
+      console.log(childSnapshot.val().Away);
+      appendToTable( childSnapshot.val().Trainname, childSnapshot.val().Destination, childSnapshot.val().Frequency, childSnapshot.val().Next, childSnapshot.val().Away);
 
   });
 
 });
   
-
 
 
